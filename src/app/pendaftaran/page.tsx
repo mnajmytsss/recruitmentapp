@@ -18,6 +18,7 @@ import { GoEyeClosed } from "react-icons/go";
 import { FaRegEye } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
 import FileInput from "../components/customFileInput/customFileInput";
+import Layout from "../components/layout/layout";
 
 const PendaftaranPage: React.FC = () => {
   const { user, setUser, toggleShowPassword, showPassword } = useUserStore();
@@ -46,6 +47,7 @@ const PendaftaranPage: React.FC = () => {
 
   return (
     <ChakraProvider>
+      <Layout>
       <Center position="relative" className={styles.formContainer}>
         <CustomFormControl
           sx={{ marginBottom: "20px" }}
@@ -122,6 +124,7 @@ const PendaftaranPage: React.FC = () => {
           Submit
         </Button>
       </Center>
+      </Layout>
     </ChakraProvider>
   );
 };

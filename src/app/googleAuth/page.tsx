@@ -1,14 +1,17 @@
+// 'use client'
 import React from "react";
-import { GoogleSignInButton } from "../components/authButtons";
+import { GoogleSignInButton } from "../components/googleAuthButtons/authButtons";
 import { ChakraProvider } from "@chakra-ui/react";
-import { signIn } from "next-auth/react";
+import Layout from "@/app/components/layout/layout";
 
-const googleAuth = () => {
+const GoogleAuth = () => {
   return (
     <ChakraProvider>
-      <GoogleSignInButton />
+      <Layout>
+        <GoogleSignInButton />
+      </Layout>
     </ChakraProvider>
   );
 };
 
-export default googleAuth;
+export default GoogleAuth;

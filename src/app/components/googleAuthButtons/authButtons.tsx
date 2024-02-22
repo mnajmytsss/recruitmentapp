@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button, Flex, Image } from "@chakra-ui/react";
-import googleLogo from "../../../public/google.svg";
+import googleLogo from "../../../../public/google.svg";
 import { signIn } from "next-auth/react";
 
 export function GoogleSignInButton() {
