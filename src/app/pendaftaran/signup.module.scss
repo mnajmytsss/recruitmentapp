@@ -1,0 +1,60 @@
+
+$formContainerMaxWidth: 400px;
+$inputBorderColor: #ccc;
+$inputFocusBorderColor: #0055ff;
+$errorColor: red;
+
+.formContainer {
+  max-width: $formContainerMaxWidth;
+  padding: 20px;
+  border: 1px solid $inputBorderColor;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  margin: auto;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+
+  .formControl {
+    margin-bottom: 20px;
+
+    .formLabel {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .inputPassword {
+      position: relative;
+    }
+
+    .iconPassword {
+      position: absolute;
+      right: 10px; 
+      top: 50%; 
+      transform: translateY(
+        -50%
+      ); 
+      opacity: 0.5; 
+      cursor: pointer; 
+    }
+
+    .iconPassword:hover {
+      opacity: 0.8;
+    }
+
+    .input {
+      width: 360px;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid $inputBorderColor;
+      border-radius: 4px;
+      box-sizing: border-box;
+
+      &:focus {
+        outline: none;
+        border-color: $inputFocusBorderColor;
+      }
+    }
+  }
+}
