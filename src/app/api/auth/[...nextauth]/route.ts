@@ -1,53 +1,84 @@
-import { NextAuthOptions } from "next-auth";
-import NextAuth from "next-auth/next";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt"; // Import bcrypt
+import UserAccount from "@/models/userAccountModels";
 import { connectToDB } from "@/dbConfig/dbConfig";
-import User from "@/models/userModels";
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
+connectToDB();
 
-const authOption: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
+  session: {
+    strategy: "jwt",
+  },
+  secret: process.env.NEXTAUTH_SECRET!,
+
   providers: [
-    GoogleProvider({
-      clientId: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
+    CredentialsProvider({
+      type: "credentials",
+      name: "credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
+
+        try {
+          const user: any = await UserAccount.findOne({ email }).exec();
+
+          if (user) {
+            const passwordConfirmed = await bcrypt.compare(password, user.password);
+            if (passwordConfirmed) {
+              return user;
+            }
+          }
+
+          return null;
+        } catch (error) {
+          console.error("Error in authorize:", error);
+          throw error;
+        }
+      },
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
-    async signIn(params) {
-      const { profile } = params;
-      try {
-        await connectToDB();
-
-        if (profile) {
-          const existingUser = await User.findOne({ email: profile.email });
-          if (!existingUser) {
-            await User.create({
-              name: profile.name,
-              email: profile.email,
-              avatar: profile.image
-            });
-          }
-        } else {
-          console.error("Profile is undefined");
+    async jwt({ token, user, account, profile }) {
+      if (account?.provider === "credentials" && user) {
+        const userData = await UserAccount.findOne({ email: user.email });
+        if (userData) {
+          token._id = userData._id;
+          token.email = userData.email;
+          token.name = userData.name;
+          token.picture = userData.picture;
         }
-        console.log("profile:", profile);
-      } catch (error) {
-        console.error("Error saving user to database:", error);
       }
-      return Promise.resolve(true);
+      return token;
     },
-    async session({ session, token }) {
-      if (session.user) {
-        const user = await User.findOne({ email: session.user.email });
-        session.user = user?._id.toString();
+    
+    async session({ session, token }: any) {
+      if ("_id" in token) {
+        session.user._id = token._id;
+      }
+      if ("email" in token) {
+        session.user.email = token.email;
+      }
+      if ("name" in token) {
+        session.user.name = token.name;
+      }
+      if ("picture" in token) {
+        session.user.picture = token.picture;
       }
       return session;
     },
   },
+  pages: {
+    signIn: "/signin",
+  },
 };
 
-const handler = NextAuth(authOption);
+const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

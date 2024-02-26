@@ -12,13 +12,7 @@ export async function POST(req: NextRequest) {
     const { pekerjaan, deskripsi, kualifikasi, tanggungJawab, manfaat } =
       reqBody;
 
-    if (
-      !pekerjaan ||
-      !deskripsi ||
-      !kualifikasi ||
-      !tanggungJawab ||
-      !manfaat
-    ) {
+    if (!pekerjaan || !deskripsi || !kualifikasi || !tanggungJawab || !manfaat) {
       return NextResponse.json(
         { message: "All fields are required" },
         { status: 400 }

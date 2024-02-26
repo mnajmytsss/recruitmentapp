@@ -1,13 +1,7 @@
 // userStore.ts
 import { create } from "zustand";
-import { User } from "../types/index";
-
-interface UserStore {
-  user: User;
-  setUser: (user: User) => void;
-  toggleShowPassword: () => void;
-  showPassword: boolean;
-}
+import { UserStore, AuthStore } from "../types";
+import { parseCookies } from 'nookies';
 
 export const useUserStore = create<UserStore>((set) => ({
   user: {
@@ -18,9 +12,18 @@ export const useUserStore = create<UserStore>((set) => ({
     pengalamanKerja: "",
     cv: "",
     suratLamaran: "",
-    userPhoto: "",
+    picture: "",
   },
   setUser: (user) => set({ user }),
-  toggleShowPassword: () => set((state) => ({ showPassword: !state.showPassword })),
+  toggleShowPassword: () =>
+    set((state) => ({ showPassword: !state.showPassword })),
   showPassword: false,
 }));
+
+const { cookies } = parseCookies();
+
+// export const useAuthStore = create<AuthStore>((set) => ({
+//   isLoggedIn: !!cookies["next-auth.session-token"],
+//   login: () => set({ isLoggedIn: true }),
+//   logout: () => set({ isLoggedIn: false }),
+// }));
